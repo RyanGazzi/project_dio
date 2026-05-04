@@ -1,0 +1,44 @@
+services:
+
+  # ── Vector Store ──────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"  # gRPC (opcional)
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── API ───────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src                        # código fonte
+      - ./configs:/app/configs                # settings
+      - ./src/ingestion/pdfs:/app/pdfs        # PDFs para ingestão
+    environment:
+      - QDRANT_HOST=qdrant                    # nome do serviço, não localhost
+      - QDRANT_PORT=6333
+      - OLLAMA_HOST=http://host.docker.internal:11434  # Ollama roda no host
+      - OLLAMA_LLM_MODEL=${OLLAMA_LLM_MODEL:-llama3.2}
+      - OLLAMA_EMBED_MODEL=${OLLAMA_EMBED_MODEL:-nomic-embed-text}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: on-failure
+
+volumes:
+  qdrant_data:

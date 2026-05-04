@@ -1,0 +1,37 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Variáveis de ambiente — NUNCA subir, tem credenciais
+.env
+
+# Dados do Qdrant — pode ser gigante
+qdrant/qdrant_storage/
+qdrant_storage/
+
+# PDFs dos seus documentos — dados sensíveis/pesados
+src/ingestion/pdfs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Modelos baixados pelo sentence-transformers (~80MB)
+.cache/
+~/.cache/huggingface/
+
+# Logs
+*.log
+logs/
+
+# IDEs
+.vscode/
+.idea/
+
+# Testes
+.pytest_cache/
+.coverage

@@ -1,0 +1,3 @@
+Tabelas grandes, o certo seria quebrar com menso de 50 linhas para o chunk não ficar grande demais.
+
+Para Scanned, consigo avaliar o confidence antes de subir no QDrant, vale a pena inserir isso como condicional?
