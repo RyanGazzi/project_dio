@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-
 from llama_index.core.node_parser import HierarchicalNodeParser, get_leaf_nodes
 from llama_index.core import Document
 
@@ -49,6 +48,7 @@ def hierarchical_chunk(
                 **leaf.metadata,
                 "chunk_index": i,
                 "chunk_strategy": "hierarchical",
+                "content_type": "text",
             }
         ))
 

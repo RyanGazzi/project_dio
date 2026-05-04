@@ -5,9 +5,17 @@ from configs.settings import settings
 client = Client(host=settings.ollama_host)
 
 COMPRESSION_PROMPT = """Dado o trecho de documento abaixo e uma pergunta, 
-extraia APENAS as partes do trecho que são diretamente relevantes para responder 
-a pergunta. Se nenhuma parte for relevante, responda exatamente: "IRRELEVANTE".
-Não adicione explicações, apenas o texto extraído.
+extraia o conteúdo relevante para responder a pergunta.
+
+Regras:
+- Se houver uma definição, explicação completa ou frase principal que responde à pergunta, retorne ela inteira
+- Prefira manter contexto suficiente para que a resposta faça sentido sozinha
+- Evite cortar partes importantes da explicação
+- Só reduza o texto se houver claramente partes irrelevantes
+- Considere correspondência semântica, mesmo com erros ou formatação ruim
+- Só responda "IRRELEVANTE" se NÃO houver nenhuma informação útil
+
+Retorne apenas o texto extraído, sem explicações.
 
 Pergunta: {query}
 

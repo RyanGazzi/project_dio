@@ -3,10 +3,20 @@ from configs.settings import settings
 
 client = Client(host=settings.ollama_host)
 
-EXPANSION_PROMPT = """Gere {n} formas diferentes de fazer a mesma pergunta.
-Mantenha as variações CURTAS — máximo 10 palavras cada.
-Não responda a pergunta, apenas reformule-a com palavras diferentes.
-Retorne APENAS as variações, uma por linha, sem numeração."""
+EXPANSION_PROMPT = """Dada a pergunta abaixo, gere {n} variações curtas.
+
+Regras OBRIGATÓRIAS:
+- Mantenha o mesmo significado
+- NÃO mude a intenção
+- Preserve termos-chave importantes 
+- Inclua pelo menos UMA variação corrigindo possíveis erros de digitação
+- Inclua pelo menos UMA variação mais "limpa" para busca (sem erros)
+- Máximo 10 palavras
+
+Retorne apenas as variações, uma por linha.
+
+Pergunta: {query}
+"""
 
 
 def expand_query(query: str, n: int = 3) -> list[str]:

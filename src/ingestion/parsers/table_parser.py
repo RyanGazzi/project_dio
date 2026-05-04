@@ -29,7 +29,7 @@ def parse_tables(pdf_path: Path) -> list[ParsedTable]:
         for page in pdf.pages:
             raw_tables = page.extract_tables()
 
-            if not raw_tables or _is_fragmented(raw_tables):
+            if raw_tables and _is_fragmented(raw_tables):
                 raw_tables = page.extract_tables(table_settings=TABLE_SETTINGS)
 
             for idx, raw in enumerate(raw_tables):
@@ -75,9 +75,19 @@ def _is_low_quality(table: list[list]) -> bool:
     if not all_cells:
         return True
 
+    # Filtro 1: muitas células curtas
     short_cells = [c for c in all_cells if len(c) <= 2]
     ratio = len(short_cells) / len(all_cells)
-    return ratio > 0.4
+    if ratio > 0.4:
+        return True
+
+    # Filtro 2: muitas células com quebras de linha — texto fragmentado
+    multiline_cells = [c for c in all_cells if "\n" in c]
+    multiline_ratio = len(multiline_cells) / len(all_cells)
+    if multiline_ratio > 0.3:
+        return True
+
+    return False
 
 
 def _remove_empty_columns(table: list[list]) -> list[list]:

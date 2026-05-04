@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.core import Document
 from llama_index.embeddings.ollama import OllamaEmbedding
+from configs.settings import settings
 
 
 @dataclass
@@ -23,7 +23,10 @@ def semantic_chunk(
     Chunking semântico: quebra o texto onde o SIGNIFICADO muda,
     não onde termina um número fixo de tokens.
     """
-    embed_model = OllamaEmbedding(model_name="nomic-embed-text")
+    embed_model = OllamaEmbedding(
+        model_name=settings.ollama_embed_model,  # modelo configurado no .env
+        base_url=settings.ollama_host,           # host do Ollama (local ou Docker)
+    )
 
     splitter = SemanticSplitterNodeParser(
         buffer_size=buffer_size,
@@ -54,6 +57,7 @@ def semantic_chunk(
                 **node.metadata,
                 "chunk_index": i,
                 "chunk_strategy": "semantic",
+                "content_type": "text",
             }
         )
         for i, node in enumerate(nodes)
